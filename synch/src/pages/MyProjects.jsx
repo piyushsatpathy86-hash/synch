@@ -31,8 +31,8 @@ export default function MyProjects() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <p className="text-gray-400">Loading your projects…</p>
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
+        <p className="text-gray-mid">Loading your projects…</p>
       </div>
     );
   }
@@ -41,17 +41,20 @@ export default function MyProjects() {
     <div className="min-h-[calc(100vh-4rem)] px-4 py-10 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-extrabold text-navy">My Projects</h1>
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-orange mb-2">Projects</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-navy">My Projects</h1>
+          </div>
           <div className="flex gap-2">
             <Link
               to="/create-project"
-              className="text-sm font-semibold bg-orange text-white px-4 py-2 rounded-lg hover:brightness-110 transition-all"
+              className="text-sm font-semibold bg-orange text-white px-4 py-2 rounded-xl shadow-md shadow-orange/20 hover:bg-orange-dark transition-all"
             >
               + Create
             </Link>
             <Link
               to="/join-project"
-              className="text-sm font-semibold border border-gray-200 text-navy px-4 py-2 rounded-lg hover:bg-gray-50 transition-all"
+              className="text-sm font-semibold border border-gray-200 text-navy px-4 py-2 rounded-xl hover:bg-gray-50 transition-all"
             >
               Join
             </Link>
@@ -59,8 +62,8 @@ export default function MyProjects() {
         </div>
 
         {projects.length === 0 ? (
-          <div className="text-center py-16 bg-gray-50 rounded-xl border border-gray-100">
-            <p className="text-gray-400">You haven't joined or created any projects yet.</p>
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-gray-mid">You haven't joined or created any projects yet.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -68,13 +71,13 @@ export default function MyProjects() {
               <Link
                 key={p.id}
                 to={`/project/${p.id}`}
-                className="border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-orange/30 transition-all duration-200 bg-white"
+                className="border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-orange/30 transition-all duration-200 bg-white"
               >
                 <h3 className="text-lg font-bold text-navy">{p.name}</h3>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-mid mt-1">
                   {p.created_by === user.id ? "Created by you" : "Joined project"}
                 </p>
-                <p className="text-xs text-gray-400 mt-2 tracking-widest font-semibold">
+                <p className="text-xs text-gray-mid mt-2 tracking-widest font-semibold">
                   Code: {p.join_code}
                 </p>
               </Link>

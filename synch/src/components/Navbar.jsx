@@ -12,10 +12,10 @@ export default function Navbar() {
   }
 
   const navLinkClass =
-    "relative px-1 py-2 text-slate-300 hover:text-white transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-orange hover:after:w-full after:transition-all after:duration-300";
+    "relative px-1 py-2 text-white/65 hover:text-white transition-colors after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-orange hover:after:w-full after:transition-all after:duration-300";
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-8 h-16 bg-navy text-white shadow-lg shadow-black/20">
+    <nav className="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-8 h-[60px] bg-navy/90 backdrop-blur-md border-b border-white/[0.07] text-white">
       <Link
         to={user ? "/home" : "/"}
         className="font-extrabold text-xl tracking-tight hover:opacity-90 transition-opacity"
@@ -24,9 +24,6 @@ export default function Navbar() {
       </Link>
 
       <div className="flex items-center gap-3 sm:gap-6 text-sm font-medium">
-        {/* BUG FIX: this used to always point to "/" (the landing page with
-            demo data). Logged-in users now correctly land on the real
-            /home page with real Supabase data. */}
         <Link to={user ? "/home" : "/"} className={navLinkClass}>
           Resources
         </Link>
@@ -59,7 +56,7 @@ export default function Navbar() {
             </Link>
             <Link
               to="/signup"
-              className="bg-orange px-4 py-1.5 rounded-lg font-semibold shadow-md shadow-orange/20 hover:brightness-110 hover:scale-[1.03] active:scale-95 transition-all duration-150"
+              className="bg-orange px-5 py-2 rounded-lg font-semibold shadow-md shadow-orange/20 hover:bg-orange-dark hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
             >
               Sign up
             </Link>

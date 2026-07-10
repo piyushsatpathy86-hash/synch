@@ -310,15 +310,10 @@ export default function Landing() {
         }
         html { scroll-behavior: smooth; }
         body { font-family: var(--font); background: var(--white); color: var(--gray-dark); }
-        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 60px; background: rgba(13,13,26,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.07); }
-        .nav-logo { font-size: 20px; font-weight: 800; color: var(--white); letter-spacing: -0.5px; }
-        .nav-logo span { color: var(--orange); }
-        .nav-links { display: flex; gap: 28px; align-items: center; }
-        .nav-links a { color: rgba(255,255,255,0.65); font-size: 14px; font-weight: 500; text-decoration: none; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--white); }
-        .nav-cta { background: var(--orange); color: var(--white); font-size: 14px; font-weight: 600; padding: 8px 20px; border-radius: 8px; text-decoration: none; transition: background 0.2s, transform 0.15s; }
-        .nav-cta:hover { background: var(--orange-dk); transform: translateY(-1px); }
-        .hero { background: var(--navy); min-height: 100vh; display: flex; align-items: center; padding: 120px 48px 80px; position: relative; overflow: hidden; }
+        .jump-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+        .jump-chip { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 7px 16px; border-radius: 20px; text-decoration: none; transition: background 0.2s, color 0.2s, border-color 0.2s; }
+        .jump-chip:hover { color: var(--white); background: rgba(255,74,0,0.15); border-color: rgba(255,74,0,0.35); }
+        .hero { background: var(--navy); min-height: calc(100vh - 60px); display: flex; align-items: center; padding: 64px 48px; position: relative; overflow: hidden; }
         .hero::before { content: ''; position: absolute; top: -200px; right: -100px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,74,0,0.12) 0%, transparent 70%); pointer-events: none; }
         .hero::after { content: ''; position: absolute; bottom: -150px; left: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(83,74,183,0.1) 0%, transparent 70%); pointer-events: none; }
         .hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: center; }
@@ -474,9 +469,7 @@ export default function Landing() {
         .modal-input:focus { border-color: var(--orange); }
         .modal-error { color: #D92D20; font-size: 12px; margin-top: 10px; min-height: 14px; }
         @media (max-width: 768px) {
-          nav { padding: 0 20px; }
-          .nav-links a:not(.nav-cta) { display: none; }
-          .hero { padding: 100px 20px 60px; }
+          .hero { padding: 48px 20px; }
           .hero-inner { grid-template-columns: 1fr; gap: 40px; }
           .hero h1 { font-size: 38px; }
           .stats-strip { padding: 20px; }
@@ -496,16 +489,6 @@ export default function Landing() {
         }
       `}</style>
 
-      <nav>
-        <div className="nav-logo">Syn<span>ch</span></div>
-        <div className="nav-links">
-          <a href="#features">Features</a>
-          <a href="#search">Find Skills</a>
-          <a href="#library">Resources</a>
-          <a href="/signup" className="nav-cta" onClick={(e) => { e.preventDefault(); navigate("/signup"); }}>Get started free</a>
-        </div>
-      </nav>
-
       <section className="hero" id="top">
         <div className="hero-inner">
           <div>
@@ -517,6 +500,11 @@ export default function Landing() {
               <a href="#features" className="btn-ghost">See how it works</a>
             </div>
             <p className="hero-note">Free forever · No credit card · Students only</p>
+            <div className="jump-row">
+              <a href="#features" className="jump-chip">Features</a>
+              <a href="#search" className="jump-chip">Find Skills</a>
+              <a href="#library" className="jump-chip">Resources</a>
+            </div>
           </div>
           <div className="demo-card">
             <div className="demo-search">

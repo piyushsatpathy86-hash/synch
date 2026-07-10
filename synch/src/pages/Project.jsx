@@ -131,24 +131,24 @@ export default function Project() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <p className="text-gray-400">Loading project…</p>
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
+        <p className="text-gray-mid">Loading project…</p>
       </div>
     );
   }
 
   if (!group) {
     return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <p className="text-gray-400">Project not found.</p>
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
+        <p className="text-gray-mid">Project not found.</p>
       </div>
     );
   }
 
   const columns = [
-    { key: "todo", label: "To Do", dot: "bg-red-500" },
-    { key: "inprogress", label: "In Progress", dot: "bg-yellow-500 animate-pulse" },
-    { key: "done", label: "Done", dot: "bg-green-500" },
+    { key: "todo", label: "To Do", dot: "bg-gray-mid" },
+    { key: "inprogress", label: "In Progress", dot: "bg-orange animate-pulse" },
+    { key: "done", label: "Done", dot: "bg-teal" },
   ];
 
   return (
@@ -156,17 +156,18 @@ export default function Project() {
       {showCelebration && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-white border border-orange/30 shadow-2xl rounded-2xl px-8 py-5 text-center animate-bounce">
           <p className="text-2xl font-extrabold text-orange">🎉 Congratulations! 🎉</p>
-          <p className="text-sm text-gray-500 mt-1">All tasks completed for {group.name}</p>
+          <p className="text-sm text-gray-mid mt-1">All tasks completed for {group.name}</p>
         </div>
       )}
 
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-navy">{group.name}</h1>
+        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-orange mb-2">Project</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-navy">{group.name}</h1>
 
         {/* Members */}
         <div className="flex items-center gap-2 mt-3">
           {members.map(m => (
-            <div key={m.id} title={m.full_name} className="w-8 h-8 rounded-full overflow-hidden border border-white shadow-sm">
+            <div key={m.id} title={m.full_name} className="w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm">
               {m.avatar_url ? (
                 <img src={m.avatar_url} alt={m.full_name} className="w-full h-full object-cover" />
               ) : (
@@ -179,14 +180,14 @@ export default function Project() {
         </div>
 
         {/* Join code bar */}
-        <div className="flex items-center justify-between bg-white border border-gray-100 rounded-xl px-4 py-3 mt-4 shadow-sm">
+        <div className="flex items-center justify-between bg-white border border-gray-100 rounded-2xl px-4 py-3 mt-4 shadow-sm">
           <div>
-            <p className="text-xs text-gray-400">Join code</p>
+            <p className="text-xs text-gray-mid">Join code</p>
             <p className="text-lg font-extrabold text-navy tracking-widest">{group.join_code}</p>
           </div>
           <button
             onClick={handleCopyCode}
-            className="text-sm font-semibold text-orange border border-orange/30 rounded-lg px-4 py-2 hover:bg-orange/10 transition-all"
+            className="text-sm font-semibold text-orange border border-orange/30 rounded-xl px-4 py-2 hover:bg-orange-light transition-all"
           >
             {copied ? "Copied!" : "Copy code"}
           </button>
@@ -194,13 +195,13 @@ export default function Project() {
 
         {/* Pending join requests — creator only */}
         {isCreator && pendingRequests.length > 0 && (
-          <div className="bg-white border border-orange/30 rounded-xl p-4 mt-4 shadow-sm">
+          <div className="bg-white border border-orange/30 rounded-2xl p-4 mt-4 shadow-sm">
             <h3 className="text-sm font-bold text-navy mb-3">
               Pending requests ({pendingRequests.length})
             </h3>
             <div className="flex flex-col gap-2">
               {pendingRequests.map(req => (
-                <div key={req.id} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
+                <div key={req.id} className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2">
                   <div className="flex items-center gap-2">
                     {req.profiles?.avatar_url ? (
                       <img src={req.profiles.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
@@ -214,13 +215,13 @@ export default function Project() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => acceptRequest(req)}
-                      className="text-xs font-semibold text-green-700 border border-green-200 rounded-md px-3 py-1.5 hover:bg-green-50 transition-all"
+                      className="text-xs font-semibold text-green-700 border border-green-200 rounded-lg px-3 py-1.5 hover:bg-green-50 transition-all"
                     >
                       Accept
                     </button>
                     <button
                       onClick={() => rejectRequest(req)}
-                      className="text-xs font-semibold text-red-600 border border-red-200 rounded-md px-3 py-1.5 hover:bg-red-50 transition-all"
+                      className="text-xs font-semibold text-red-600 border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-50 transition-all"
                     >
                       Reject
                     </button>
@@ -233,7 +234,7 @@ export default function Project() {
 
         {/* Progress bar */}
         <div className="mt-4 mb-8">
-          <div className="flex justify-between text-xs text-gray-500 mb-1">
+          <div className="flex justify-between text-xs text-gray-mid mb-1">
             <span>Progress</span>
             <span>{progress}%</span>
           </div>
@@ -248,13 +249,13 @@ export default function Project() {
         {/* Add task form */}
         <form onSubmit={handleAddTask} className="flex flex-col sm:flex-row gap-2 mb-8">
           <input
-            className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
+            className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange"
             placeholder="New task title"
             value={taskTitle}
             onChange={e => setTaskTitle(e.target.value)}
           />
           <select
-            className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm"
+            className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm"
             value={assignedTo}
             onChange={e => setAssignedTo(e.target.value)}
           >
@@ -266,7 +267,7 @@ export default function Project() {
           <button
             type="submit"
             disabled={adding}
-            className="bg-orange text-white font-bold px-5 py-2.5 rounded-lg hover:brightness-110 transition-all disabled:opacity-60"
+            className="bg-orange text-white font-bold px-5 py-2.5 rounded-xl shadow-md shadow-orange/20 hover:bg-orange-dark transition-all disabled:opacity-60"
           >
             {adding ? "Adding…" : "Add task"}
           </button>
@@ -275,8 +276,8 @@ export default function Project() {
         {/* Task board */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {columns.map(col => (
-            <div key={col.key} className="bg-gray-50 rounded-xl p-4">
-              <h3 className="flex items-center gap-2 text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
+            <div key={col.key} className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-gray-mid uppercase tracking-wide mb-3">
                 <span className={`inline-block w-2.5 h-2.5 rounded-full ${col.dot}`} />
                 {col.label}
               </h3>
@@ -284,10 +285,10 @@ export default function Project() {
                 {tasks.filter(t => t.status === col.key).map(task => (
                   <div
                     key={task.id}
-                    className="bg-white border border-gray-100 rounded-lg p-3 shadow-sm hover:shadow-md transition-all"
+                    className="bg-gray-50 border border-gray-100 rounded-xl p-3 hover:shadow-md hover:border-orange/20 transition-all"
                   >
                     <p className="text-sm font-semibold text-navy">{task.title}</p>
-                    <p className="text-xs text-gray-400 mt-1 mb-2">
+                    <p className="text-xs text-gray-mid mt-1 mb-2">
                       {task.profiles?.full_name || "Unassigned"}
                     </p>
 
@@ -295,7 +296,7 @@ export default function Project() {
                       {task.status === "todo" && (
                         <button
                           onClick={() => moveTask(task, "inprogress")}
-                          className="text-xs font-semibold text-orange border border-orange/30 rounded-md px-2 py-1 hover:bg-orange/10 transition-all"
+                          className="text-xs font-semibold text-orange border border-orange/30 rounded-lg px-2 py-1 hover:bg-orange-light transition-all"
                         >
                           Start →
                         </button>
@@ -305,13 +306,13 @@ export default function Project() {
                         <>
                           <button
                             onClick={() => moveTask(task, "todo")}
-                            className="text-xs font-semibold text-gray-500 border border-gray-200 rounded-md px-2 py-1 hover:bg-gray-50 transition-all"
+                            className="text-xs font-semibold text-gray-mid border border-gray-200 rounded-lg px-2 py-1 hover:bg-gray-100 transition-all"
                           >
                             ← To Do
                           </button>
                           <button
                             onClick={() => moveTask(task, "done")}
-                            className="text-xs font-semibold text-green-700 border border-green-200 rounded-md px-2 py-1 hover:bg-green-50 transition-all"
+                            className="text-xs font-semibold text-green-700 border border-green-200 rounded-lg px-2 py-1 hover:bg-green-50 transition-all"
                           >
                             Mark Done ✓
                           </button>
@@ -321,7 +322,7 @@ export default function Project() {
                       {task.status === "done" && (
                         <button
                           onClick={() => moveTask(task, "inprogress")}
-                          className="text-xs font-semibold text-gray-500 border border-gray-200 rounded-md px-2 py-1 hover:bg-gray-50 transition-all"
+                          className="text-xs font-semibold text-gray-mid border border-gray-200 rounded-lg px-2 py-1 hover:bg-gray-100 transition-all"
                         >
                           ↺ Undo
                         </button>
@@ -330,7 +331,7 @@ export default function Project() {
                   </div>
                 ))}
                 {tasks.filter(t => t.status === col.key).length === 0 && (
-                  <p className="text-xs text-gray-300 italic">No tasks</p>
+                  <p className="text-xs text-gray-mid/60 italic">No tasks</p>
                 )}
               </div>
             </div>

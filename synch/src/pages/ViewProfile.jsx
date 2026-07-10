@@ -31,7 +31,7 @@ export default function ViewProfile() {
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <p className="text-gray-400">Loading profile…</p>
+        <p className="text-gray-mid">Loading profile…</p>
       </div>
     );
   }
@@ -39,7 +39,7 @@ export default function ViewProfile() {
   if (notFound) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
-        <p className="text-gray-400">Profile not found.</p>
+        <p className="text-gray-mid">Profile not found.</p>
       </div>
     );
   }
@@ -55,20 +55,20 @@ export default function ViewProfile() {
               className="w-16 h-16 rounded-full object-cover border border-gray-100"
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-orange text-white flex items-center justify-center text-xl font-bold">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple to-[#7B72E8] text-white flex items-center justify-center text-xl font-bold">
               {profile.full_name?.[0]?.toUpperCase() || "?"}
             </div>
           )}
           <div>
-            <h1 className="text-xl font-extrabold text-navy">{profile.full_name || "Unnamed student"}</h1>
-            <p className="text-gray-500 text-sm">{profile.college}</p>
+            <h1 className="text-[22px] font-extrabold tracking-[-0.5px] text-navy">{profile.full_name || "Unnamed student"}</h1>
+            <p className="text-gray-mid text-sm">{profile.college}</p>
           </div>
         </div>
 
         {profile.skills?.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-6">
             {profile.skills.map((skill, i) => (
-              <span key={i} className="text-xs font-semibold bg-orange/10 text-orange px-2.5 py-1 rounded-full">
+              <span key={i} className="text-xs font-semibold bg-purple-light text-purple px-2.5 py-1 rounded-full">
                 {skill}
               </span>
             ))}

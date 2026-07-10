@@ -77,14 +77,15 @@ export default function JoinProject() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gradient-to-b from-white to-gray-50">
-      <div className="w-full max-w-md bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/60 p-8">
-        <h1 className="text-2xl font-extrabold text-navy mb-2">Join a project</h1>
-        <p className="text-gray-500 text-sm mb-6">Enter the code your teammate shared with you.</p>
+      <div className="w-full max-w-md bg-white border border-gray-100 rounded-3xl shadow-xl shadow-gray-200/60 p-8">
+        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-orange mb-2">Projects</p>
+        <h1 className="text-2xl font-extrabold tracking-tight text-navy mb-2">Join a project</h1>
+        <p className="text-gray-mid text-sm mb-6">Enter the code your teammate shared with you.</p>
 
         {!requested ? (
           <form onSubmit={handleJoin} className="flex flex-col gap-4">
             <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-center tracking-widest font-bold uppercase focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-center tracking-widest font-bold uppercase focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
               placeholder="e.g. XK4R9P"
               value={code}
               onChange={e => setCode(e.target.value)}
@@ -94,20 +95,20 @@ export default function JoinProject() {
             <button
               type="submit"
               disabled={joining}
-              className="bg-orange text-white font-bold py-2.5 rounded-lg shadow-md shadow-orange/20 hover:brightness-110 transition-all disabled:opacity-60"
+              className="bg-orange text-white font-bold py-2.5 rounded-xl shadow-md shadow-orange/20 hover:bg-orange-dark hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {joining ? "Sending request…" : "Request to join"}
             </button>
 
             {error && (
-              <p className="text-red-600 text-sm bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+              <p className="text-red-600 text-sm bg-red-50 border border-red-100 rounded-xl px-3 py-2">
                 {error}
               </p>
             )}
           </form>
         ) : (
           <div className="text-center">
-            <p className="text-green-700 text-sm bg-green-50 border border-green-100 rounded-lg px-3 py-3">
+            <p className="text-green-700 text-sm bg-green-50 border border-green-100 rounded-xl px-3 py-3">
               Request sent! The project creator needs to approve you before you can access it.
             </p>
           </div>
