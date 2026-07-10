@@ -688,6 +688,7 @@ export default function Landing() {
           <a href="/signup" onClick={(e) => { e.preventDefault(); navigate("/signup"); }}>Sign up</a>
         </div>
         <div className="footer-copy">Made for students · Enjoy</div>
+        <div className="footer-copy">Made by Samikshya & Piyush ;)</div>
       </footer>
     </>
   );
