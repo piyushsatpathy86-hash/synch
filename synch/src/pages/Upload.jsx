@@ -57,19 +57,20 @@ export default function Upload() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-start sm:items-center justify-center px-4 py-10 bg-gradient-to-b from-white to-gray-50">
-      <div className="w-full max-w-lg bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/60 p-8">
+      <div className="w-full max-w-lg bg-white border border-gray-100 rounded-3xl shadow-xl shadow-gray-200/60 p-8">
         <div className="mb-6">
-          <h2 className="text-2xl font-extrabold text-navy">Upload your resource</h2>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-orange mb-2">Resource library</p>
+          <h2 className="text-2xl font-extrabold tracking-tight text-navy">Upload your resource</h2>
+          <p className="text-gray-mid text-sm mt-1">
             Share notes, cheat sheets, or guides with other students
           </p>
         </div>
 
         <div className="flex flex-col gap-4">
           <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Title</label>
+            <label className="text-xs font-semibold text-gray-mid mb-1 block">Title</label>
             <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
               placeholder="e.g. DSA Sheet - Arrays & Strings"
               value={title}
               onChange={e => setTitle(e.target.value)}
@@ -77,9 +78,9 @@ export default function Upload() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Subject</label>
+            <label className="text-xs font-semibold text-gray-mid mb-1 block">Subject</label>
             <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
               placeholder="DSA, Web Dev, GATE..."
               value={subject}
               onChange={e => setSubject(e.target.value)}
@@ -87,9 +88,9 @@ export default function Upload() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Description</label>
+            <label className="text-xs font-semibold text-gray-mid mb-1 block">Description</label>
             <textarea
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all min-h-[90px] resize-none"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all min-h-[90px] resize-none"
               placeholder="Short description..."
               value={description}
               onChange={e => setDescription(e.target.value)}
@@ -97,12 +98,12 @@ export default function Upload() {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">File</label>
+            <label className="text-xs font-semibold text-gray-mid mb-1 block">File</label>
             <label
               htmlFor="file-upload"
-              className="flex items-center justify-between gap-3 w-full border border-dashed border-gray-300 rounded-lg px-3 py-3 text-sm cursor-pointer hover:border-orange hover:bg-orange/5 transition-all"
+              className="flex items-center justify-between gap-3 w-full border border-dashed border-gray-300 rounded-xl px-3 py-3 text-sm cursor-pointer hover:border-orange hover:bg-orange-light transition-all"
             >
-              <span className="text-gray-500 truncate">
+              <span className="text-gray-mid truncate">
                 {file ? file.name : "Click to choose a file (PDF, PNG, JPG, DOCX)"}
               </span>
               <span className="text-orange font-semibold shrink-0">Browse</span>
@@ -119,14 +120,14 @@ export default function Upload() {
           <button
             onClick={handleUpload}
             disabled={loading}
-            className="w-full bg-orange text-white py-2.5 rounded-lg font-bold mt-2 shadow-md shadow-orange/20 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:hover:scale-100 disabled:hover:brightness-100"
+            className="w-full bg-orange text-white py-2.5 rounded-xl font-bold mt-2 shadow-md shadow-orange/20 hover:bg-orange-dark hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:opacity-60 disabled:hover:translate-y-0"
           >
             {loading ? "Uploading…" : "Upload"}
           </button>
         </div>
 
         {success && (
-          <p className="mt-4 text-green-700 text-sm bg-green-50 border border-green-100 rounded-lg px-3 py-2">
+          <p className="mt-4 text-green-700 text-sm bg-green-50 border border-green-100 rounded-xl px-3 py-2">
             Uploaded! Kindly wait for the admin's approval.
           </p>
         )}

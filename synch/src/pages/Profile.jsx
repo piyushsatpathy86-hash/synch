@@ -99,7 +99,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
-        <p className="text-gray-400">Loading your profile…</p>
+        <p className="text-gray-mid">Loading your profile…</p>
       </div>
     );
   }
@@ -109,13 +109,13 @@ export default function Profile() {
       <div className="w-full max-w-lg bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/60 p-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-extrabold text-navy">Your profile</h1>
-            <p className="text-gray-500 text-sm mt-1">Logged in as {user?.email}</p>
+            <h1 className="text-[22px] font-extrabold tracking-[-0.5px] text-navy">Your profile</h1>
+            <p className="text-gray-mid text-sm mt-1">Logged in as {user?.email}</p>
           </div>
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-sm font-semibold text-orange border border-orange/30 rounded-lg px-4 py-2 hover:bg-orange/10 transition-all"
+              className="text-sm font-semibold text-orange border border-orange/30 rounded-lg px-4 py-2 hover:bg-orange/10 hover:-translate-y-0.5 active:translate-y-0 transition-all"
             >
               Edit
             </button>
@@ -128,20 +128,20 @@ export default function Profile() {
               {avatarUrl ? (
                 <img src={avatarUrl} alt="avatar" className="w-16 h-16 rounded-full object-cover" />
               ) : (
-                <div className="w-16 h-16 rounded-full bg-orange text-white flex items-center justify-center text-xl font-bold">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange to-[#FF8A5C] text-white flex items-center justify-center text-xl font-bold">
                   {fullName?.[0]?.toUpperCase() || "?"}
                 </div>
               )}
               <div>
                 <p className="font-bold text-navy">{fullName || "No name set"}</p>
-                <p className="text-gray-500 text-sm">{college || "No college set"}</p>
+                <p className="text-gray-mid text-sm">{college || "No college set"}</p>
               </div>
             </div>
 
             {skillsInput && (
               <div className="flex flex-wrap gap-1.5">
                 {skillsInput.split(",").map(s => s.trim()).filter(Boolean).map((skill, i) => (
-                  <span key={i} className="text-xs font-semibold bg-orange/10 text-orange px-2.5 py-1 rounded-full">
+                  <span key={i} className="text-xs font-semibold bg-purple-light text-purple px-2.5 py-1 rounded-full">
                     {skill}
                   </span>
                 ))}
@@ -153,19 +153,19 @@ export default function Profile() {
               {instagram && <p>📷 {instagram}</p>}
               {emailContact && <p>📧 {emailContact}</p>}
               {!github && !instagram && !emailContact && (
-                <p className="text-gray-400 italic">No contact info added yet.</p>
+                <p className="text-gray-mid italic">No contact info added yet.</p>
               )}
             </div>
           </div>
         ) : (
           <form onSubmit={handleSave} className="flex flex-col gap-4">
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Profile photo</label>
+              <label className="text-xs font-semibold text-gray-mid mb-1 block">Profile photo</label>
               <div className="flex items-center gap-3">
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="avatar" className="w-14 h-14 rounded-full object-cover" />
                 ) : (
-                  <div className="w-14 h-14 rounded-full bg-orange text-white flex items-center justify-center text-lg font-bold">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange to-[#FF8A5C] text-white flex items-center justify-center text-lg font-bold">
                     {fullName?.[0]?.toUpperCase() || "?"}
                   </div>
                 )}
@@ -179,7 +179,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Full name</label>
+              <label className="text-xs font-semibold text-gray-mid mb-1 block">Full name</label>
               <input
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
                 placeholder="Your name"
@@ -189,7 +189,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">College</label>
+              <label className="text-xs font-semibold text-gray-mid mb-1 block">College</label>
               <input
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
                 placeholder="e.g. IIT Bhubaneswar"
@@ -199,8 +199,8 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">
-                Skills <span className="font-normal text-gray-400">(comma separated)</span>
+              <label className="text-xs font-semibold text-gray-mid mb-1 block">
+                Skills <span className="font-normal text-gray-mid/70">(comma separated)</span>
               </label>
               <input
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
@@ -213,7 +213,7 @@ export default function Profile() {
                   {skillsInput.split(",").map(s => s.trim()).filter(Boolean).map((skill, i) => (
                     <span
                       key={i}
-                      className="text-xs font-semibold bg-orange/10 text-orange px-2.5 py-1 rounded-full"
+                      className="text-xs font-semibold bg-purple-light text-purple px-2.5 py-1 rounded-full"
                     >
                       {skill}
                     </span>
@@ -223,7 +223,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">GitHub</label>
+              <label className="text-xs font-semibold text-gray-mid mb-1 block">GitHub</label>
               <input
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
                 placeholder="github.com/username"
@@ -233,7 +233,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Instagram</label>
+              <label className="text-xs font-semibold text-gray-mid mb-1 block">Instagram</label>
               <input
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
                 placeholder="@username"
@@ -243,7 +243,7 @@ export default function Profile() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-gray-500 mb-1 block">Contact email</label>
+              <label className="text-xs font-semibold text-gray-mid mb-1 block">Contact email</label>
               <input
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
                 placeholder="you@college.edu"
@@ -256,7 +256,7 @@ export default function Profile() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-orange text-white font-bold py-2.5 rounded-lg shadow-md shadow-orange/20 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:hover:scale-100 disabled:hover:brightness-100"
+                className="flex-1 bg-orange text-white font-bold py-2.5 rounded-lg shadow-md shadow-orange/20 hover:bg-orange-dark hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150 disabled:opacity-60 disabled:hover:translate-y-0"
               >
                 {saving ? "Saving…" : "Save changes"}
               </button>

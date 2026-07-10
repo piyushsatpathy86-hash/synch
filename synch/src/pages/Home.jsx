@@ -62,14 +62,14 @@ export default function Home() {
     <div className="min-h-[calc(100vh-4rem)] px-4 py-10 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-wide text-orange mb-1">Resource library</p>
-          <h1 className="text-3xl font-extrabold text-navy">Free study materials</h1>
-          <p className="text-gray-500 mt-1">Notes, cheat sheets, and past papers shared by students</p>
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-orange mb-3">Resource library</p>
+          <h1 className="text-4xl font-extrabold tracking-[-1.5px] text-navy leading-[1.1]">Free study materials</h1>
+          <p className="text-gray-mid text-[17px] leading-relaxed mt-2 max-w-md">Notes, cheat sheets, and past papers shared by students</p>
         </div>
 
         <div className="relative mb-8">
           <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-mid"
             fill="none" viewBox="0 0 24 24" stroke="currentColor"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
@@ -92,7 +92,7 @@ export default function Home() {
 
         {!loading && filtered.length === 0 && (
           <div className="text-center py-16 bg-gray-50 rounded-2xl border border-gray-100">
-            <p className="text-gray-400">No resources found. Kindly upload one!</p>
+            <p className="text-gray-mid">No resources found. Kindly upload one!</p>
           </div>
         )}
 
@@ -100,13 +100,13 @@ export default function Home() {
           {filtered.map(resource => (
             <div
               key={resource.id}
-              className="border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-orange/30 transition-all duration-200 bg-white"
+              className="border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)] hover:-translate-y-[3px] hover:border-orange transition-all duration-200 bg-white"
             >
-              <span className="text-xs font-semibold bg-orange/10 text-orange px-2.5 py-1 rounded-full">
+              <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-orange">
                 {resource.subject || "General"}
               </span>
-              <h3 className="text-lg font-bold text-navy mt-3">{resource.title}</h3>
-              <p className="text-gray-500 text-sm mt-1">{resource.description}</p>
+              <h3 className="text-lg font-bold text-navy mt-2 leading-snug">{resource.title}</h3>
+              <p className="text-gray-mid text-sm mt-1">{resource.description}</p>
 
               <div className="flex items-center justify-between mt-4">
                 <a
@@ -114,7 +114,7 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                   onClick={(e) => handleDownloadClick(e, resource.file_url)}
-                  className="inline-block bg-orange text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md shadow-orange/20 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150"
+                  className="inline-block bg-orange text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md shadow-orange/20 hover:bg-orange-dark hover:-translate-y-0.5 active:translate-y-0 transition-all duration-150"
                 >
                   Download
                 </a>
@@ -129,7 +129,7 @@ export default function Home() {
                 )}
               </div>
 
-              <p className="text-xs text-gray-400 mt-3">
+              <p className="text-xs text-gray-mid/70 mt-3">
                 Uploaded by {resource.profiles?.full_name || "Unknown"}
               </p>
             </div>
