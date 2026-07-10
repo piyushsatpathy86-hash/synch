@@ -1,16 +1,74 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { supabase } from "../supabaseClient";
 
 export default function Landing() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // BUG FIX: this used to say navigate("/") which is Landing itself —
+  // logged-in users never actually reached the real Home page. Now it
+  // correctly sends them to /home.
   useEffect(() => {
-    if (user) navigate("/");
+    if (user) navigate("/home");
   }, [user]);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadRealData() {
+      // ---- Fetch real students (profiles) ----
+      const { data: profileRows } = await supabase
+        .from("profiles")
+        .select("id, full_name, college, skills, avatar_url")
+        .not("full_name", "is", null)
+        .neq("full_name", "")
+        .limit(50);
+
+      const palette = ["a", "b", "c"];
+      const STUDENTS = (profileRows || [])
+        .filter((p) => (p.skills || []).length > 0)
+        .map((p, i) => ({
+          id: p.id,
+          name: p.full_name,
+          college: p.college || "College not set",
+          skills: p.skills || [],
+          av: (p.full_name || "?").trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase(),
+          cls: palette[i % palette.length],
+        }));
+
+      // ---- Fetch real resources (approved only) ----
+      const { data: resourceRows } = await supabase
+        .from("resources")
+        .select("id, title, subject, description, file_url, created_at, profiles(full_name)")
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+        .limit(12);
+
+      const RESOURCES = resourceRows || [];
+
+      // ---- Fetch real platform stats ----
+      const [{ count: studentCount }, { count: resourceCount }, { count: projectCount }] = await Promise.all([
+        supabase.from("profiles").select("id", { count: "exact", head: true }).not("full_name", "is", null).neq("full_name", ""),
+        supabase.from("resources").select("id", { count: "exact", head: true }).eq("status", "approved"),
+        supabase.from("groups").select("id", { count: "exact", head: true }),
+      ]);
+
+      if (!cancelled) {
+        setupInteractivity(STUDENTS, RESOURCES, {
+          students: studentCount || 0,
+          resources: resourceCount || 0,
+          projects: projectCount || 0,
+        });
+      }
+    }
+
+    loadRealData();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  function setupInteractivity(STUDENTS, RESOURCES, stats) {
     // Join code generator
     const generateBtn = document.getElementById("jcGenerateBtn");
     const jcCode = document.getElementById("jcCode");
@@ -71,24 +129,18 @@ export default function Landing() {
     });
     updateProgress();
 
-    // Student data
-    const STUDENTS = [
-      { name: "Aryan Rao", college: "NIT Rourkela · CSE", skills: ["Design", "Figma"], av: "AR", cls: "a" },
-      { name: "Sneha Patel", college: "VIT Vellore · IT", skills: ["Design", "UI/UX"], av: "SP", cls: "b" },
-      { name: "Rahul Kumar", college: "SRM Chennai · ECE", skills: ["Design", "Video"], av: "RK", cls: "c" },
-      { name: "Devyani Sahu", college: "ITER Bhubaneswar · CSE", skills: ["React", "Figma"], av: "DS", cls: "a" },
-      { name: "Rutumbhara Nayak", college: "GITA Bhubaneswar · CSE", skills: ["ML", "React"], av: "RN", cls: "b" },
-      { name: "Smruti Ranjan", college: "KIIT Bhubaneswar · CSE", skills: ["Blockchain", "React"], av: "SR", cls: "c" },
-      { name: "Rudra Prasad", college: "KIIT Bhubaneswar · IT", skills: ["ML", "Video"], av: "RP", cls: "a" },
-      { name: "Ananya Das", college: "IIT Bhubaneswar · CSE", skills: ["UI/UX", "Figma"], av: "AD", cls: "b" },
-    ];
-
     function matches(student, query, activeSkills) {
       const q = query.trim().toLowerCase();
       const queryMatch = !q || student.skills.some((s) => s.toLowerCase().includes(q)) || student.name.toLowerCase().includes(q);
       const chipMatch = activeSkills.length === 0 || activeSkills.some((s) => student.skills.includes(s));
       return queryMatch && chipMatch;
     }
+
+    // Navigate to a real profile (or send guests to signup first)
+    const goToProfile = (id) => {
+      if (!user) { navigate("/signup"); return; }
+      navigate(`/profile/${id}`);
+    };
 
     // Hero search
     const heroInput = document.getElementById("heroSearchInput");
@@ -101,9 +153,11 @@ export default function Landing() {
       if (!heroInput || !heroResults || !heroCount) return;
       const q = heroInput.value;
       const list = STUDENTS.filter((s) => matches(s, q, heroActiveSkills)).slice(0, 3);
-      heroCount.textContent = `${list.length} student${list.length !== 1 ? "s" : ""} found`;
+      heroCount.textContent = list.length
+        ? `${list.length} student${list.length !== 1 ? "s" : ""} found`
+        : STUDENTS.length === 0 ? "No students on Synch yet — be the first!" : "0 students found";
       heroResults.innerHTML = list.map((s) => `
-        <div class="profile-card-mini">
+        <div class="profile-card-mini" data-id="${s.id}" style="cursor:pointer">
           <div class="avatar av-${s.cls}">${s.av}</div>
           <div class="profile-info">
             <div class="profile-name">${s.name}</div>
@@ -116,6 +170,12 @@ export default function Landing() {
         c.classList.toggle("chip-active", heroActiveSkills.includes(c.dataset.skill))
       );
     }
+
+    heroResults?.addEventListener("click", (e) => {
+      const card = e.target.closest(".profile-card-mini");
+      if (!card) return;
+      goToProfile(card.dataset.id);
+    });
 
     heroInput?.addEventListener("input", renderHeroResults);
     heroChips?.addEventListener("click", (e) => {
@@ -140,7 +200,7 @@ export default function Landing() {
       const q = showInput.value;
       const list = STUDENTS.filter((s) => matches(s, q, showActiveSkills));
       showResults.innerHTML = list.map((s) => `
-        <div class="result-card">
+        <div class="result-card" data-id="${s.id}" style="cursor:pointer">
           <div class="av-big av-big-${s.cls}">${s.av}</div>
           <div>
             <div class="rc-name">${s.name}</div>
@@ -148,12 +208,18 @@ export default function Landing() {
             <div class="rc-skills">${s.skills.map((sk) => `<span class="rc-skill">${sk}</span>`).join("")}</div>
           </div>
           <div class="rc-btn">View profile</div>
-        </div>`).join("") || `<p style="color:var(--gray-mid); font-size:14px; padding:20px 0;">No students match that search yet.</p>`;
+        </div>`).join("") || `<p style="color:var(--gray-mid); font-size:14px; padding:20px 0;">${STUDENTS.length === 0 ? "No students on Synch yet — be the first to sign up!" : "No students match that search yet."}</p>`;
       [...(showChips?.children || [])].forEach((c) => {
         c.classList.toggle("fc-active", showActiveSkills.includes(c.dataset.skill));
         c.classList.toggle("fc-inactive", !showActiveSkills.includes(c.dataset.skill));
       });
     }
+
+    showResults?.addEventListener("click", (e) => {
+      const card = e.target.closest(".result-card");
+      if (!card) return;
+      goToProfile(card.dataset.id);
+    });
 
     showInput?.addEventListener("input", renderShowResults);
     showChips?.addEventListener("click", (e) => {
@@ -167,55 +233,66 @@ export default function Landing() {
     });
     renderShowResults();
 
-    // Resource search
+    // Resource library — built from real, approved resources
     const resourceInput = document.getElementById("resourceSearchInput");
-    const resourceCards = [...document.querySelectorAll("#resourceGrid .resource-card")];
+    const resourceGrid = document.getElementById("resourceGrid");
     const resourceEmpty = document.getElementById("resourceEmpty");
-    resourceInput?.addEventListener("input", () => {
-      const q = resourceInput.value.trim().toLowerCase();
-      let visible = 0;
-      resourceCards.forEach((card) => {
-        const match = card.dataset.tag.toLowerCase().includes(q) || card.dataset.title.toLowerCase().includes(q);
-        card.style.display = match ? "" : "none";
-        if (match) visible++;
-      });
-      if (resourceEmpty) resourceEmpty.style.display = visible === 0 ? "block" : "none";
-    });
 
-    // Signup modal
-    const overlay = document.getElementById("signupOverlay");
-    const openBtns = [document.getElementById("openSignupBtn"), document.querySelector(".nav-cta")];
-    openBtns.forEach((btn) =>
-      btn?.addEventListener("click", (e) => {
-        e.preventDefault();
-        overlay?.classList.add("open");
-        document.getElementById("signupFormWrap").style.display = "block";
-        document.getElementById("signupSuccessWrap").style.display = "none";
-        document.getElementById("signupForm").reset();
-        document.getElementById("signupError").textContent = "";
-      })
-    );
-    document.getElementById("closeSignupBtn")?.addEventListener("click", () => overlay?.classList.remove("open"));
-    overlay?.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); });
-
-    document.getElementById("signupForm")?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = document.getElementById("signupName").value.trim();
-      const email = document.getElementById("signupEmail").value.trim();
-      const errorEl = document.getElementById("signupError");
-      if (!/^\S+@\S+\.\S+$/.test(email)) {
-        errorEl.textContent = "Enter a valid email address.";
-        return;
+    function renderResources() {
+      if (!resourceGrid) return;
+      const q = (resourceInput?.value || "").trim().toLowerCase();
+      const list = RESOURCES.filter((r) =>
+        (r.subject || "").toLowerCase().includes(q) || (r.title || "").toLowerCase().includes(q)
+      );
+      resourceGrid.innerHTML = list.map((r) => `
+        <div class="resource-card" data-url="${r.file_url}">
+          <div class="resource-tag">${r.subject || "General"}</div>
+          <div class="resource-title">${r.title}</div>
+          <div class="resource-meta">Uploaded by ${r.profiles?.full_name || "a student"}</div>
+          <div class="resource-dl">↓ Download</div>
+        </div>`).join("");
+      if (resourceEmpty) {
+        resourceEmpty.style.display = list.length === 0 ? "block" : "none";
+        resourceEmpty.textContent = RESOURCES.length === 0
+          ? "No resources uploaded yet — sign up and be the first to share one!"
+          : "No resources match that search.";
       }
-      errorEl.textContent = "";
-      document.getElementById("signupFormWrap").style.display = "none";
-      document.getElementById("signupSuccessWrap").style.display = "block";
-      document.getElementById("successName").textContent = name.split(" ")[0];
-      document.getElementById("successCount").textContent = "#201";
+    }
+
+    resourceGrid?.addEventListener("click", (e) => {
+      const card = e.target.closest(".resource-card");
+      if (!card) return;
+      if (!user) { navigate("/signup"); return; }
+      window.open(card.dataset.url, "_blank", "noreferrer");
     });
 
-    document.getElementById("signupDoneBtn")?.addEventListener("click", () => overlay?.classList.remove("open"));
-  }, []);
+    resourceInput?.addEventListener("input", renderResources);
+    renderResources();
+
+    // Real platform stats
+    const elStudents = document.getElementById("statStudents");
+    const elResources = document.getElementById("statResources");
+    const elProjects = document.getElementById("statProjects");
+    if (elStudents) elStudents.textContent = `${stats.students}${stats.students >= 50 ? "+" : ""}`;
+    if (elResources) elResources.textContent = `${stats.resources}${stats.resources >= 50 ? "+" : ""}`;
+    if (elProjects) elProjects.textContent = `${stats.projects}${stats.projects >= 20 ? "+" : ""}`;
+
+    // Join-code & task-board sections are illustrative (no visitor has a
+    // real project yet) — but their CTA now takes people to a real action.
+    const jcSection = document.querySelector(".jc-demo");
+    if (jcSection) {
+      jcSection.style.cursor = "pointer";
+      jcSection.title = user ? "Go to your projects" : "Sign up to create a project";
+      jcSection.addEventListener("click", (e) => {
+        if (e.target.id === "jcGenerateBtn" || e.target.id === "jcCopyBtn") return;
+        navigate(user ? "/create-project" : "/signup");
+      });
+    }
+
+    // Note: the old fake signup modal (demo-only, never actually called Supabase)
+    // has been removed. All "Create profile" / "Get started" / "Sign up"
+    // buttons below now navigate straight to the real /signup page.
+  }
 
   return (
     <>
@@ -425,7 +502,7 @@ export default function Landing() {
           <a href="#features">Features</a>
           <a href="#search">Find Skills</a>
           <a href="#library">Resources</a>
-          <a href="#signup" className="nav-cta">Get started free</a>
+          <a href="/signup" className="nav-cta" onClick={(e) => { e.preventDefault(); navigate("/signup"); }}>Get started free</a>
         </div>
       </nav>
 
@@ -436,7 +513,7 @@ export default function Landing() {
             <h1>Find your<br/><em>perfect</em><br/>teammate.</h1>
             <p className="hero-sub">Search students by skill across any college. Build projects together. No WhatsApp chaos — one place for real collaboration.</p>
             <div className="hero-actions">
-              <a href="#signup" className="btn-primary">Start for free</a>
+              <a href="/signup" className="btn-primary" onClick={(e) => { e.preventDefault(); navigate("/signup"); }}>Start for free</a>
               <a href="#features" className="btn-ghost">See how it works</a>
             </div>
             <p className="hero-note">Free forever · No credit card · Students only</p>
@@ -460,11 +537,11 @@ export default function Landing() {
 
       <div className="stats-strip">
         <div className="stats-inner">
-          <div className="stat-item"><div className="stat-num">200+</div><div className="stat-label">Students</div></div>
+          <div className="stat-item"><div className="stat-num" id="statStudents">–</div><div className="stat-label">Students</div></div>
           <div className="stat-div"></div>
-          <div className="stat-item"><div className="stat-num">100+</div><div className="stat-label">Resources downloaded</div></div>
+          <div className="stat-item"><div className="stat-num" id="statResources">–</div><div className="stat-label">Resources shared</div></div>
           <div className="stat-div"></div>
-          <div className="stat-item"><div className="stat-num">30+</div><div className="stat-label">Active projects</div></div>
+          <div className="stat-item"><div className="stat-num" id="statProjects">–</div><div className="stat-label">Active projects</div></div>
           <div className="stat-div"></div>
           <div className="stat-item"><div className="stat-num">₹0</div><div className="stat-label">Cost to use</div></div>
         </div>
@@ -530,14 +607,7 @@ export default function Landing() {
             <span>🔍</span>
             <input type="text" id="resourceSearchInput" placeholder="Search resources by title or topic…"/>
           </div>
-          <div className="resource-grid" id="resourceGrid">
-            <div className="resource-card" data-tag="Data Structures" data-title="Complete DSA Cheat Sheet — Trees, Graphs, DP"><div className="resource-tag">Data Structures</div><div className="resource-title">Complete DSA Cheat Sheet — Trees, Graphs, DP</div><div className="resource-meta">Uploaded by Aryan · 4 pages</div><div className="resource-dl">↓ Download PDF</div></div>
-            <div className="resource-card" data-tag="GATE Prep" data-title="GATE CS 2024 — Topic-wise Previous Year Questions"><div className="resource-tag">GATE Prep</div><div className="resource-title">GATE CS 2024 — Topic-wise Previous Year Questions</div><div className="resource-meta">Uploaded by Sneha · 12 pages</div><div className="resource-dl">↓ Download PDF</div></div>
-            <div className="resource-card" data-tag="OS" data-title="Operating Systems — Process Scheduling Notes"><div className="resource-tag">OS</div><div className="resource-title">Operating Systems — Process Scheduling Notes</div><div className="resource-meta">Uploaded by Admin · 6 pages</div><div className="resource-dl">↓ Download PDF</div></div>
-            <div className="resource-card" data-tag="DBMS" data-title="SQL Query Checklist — Joins, Subqueries, Indexes"><div className="resource-tag">DBMS</div><div className="resource-title">SQL Query Checklist — Joins, Subqueries, Indexes</div><div className="resource-meta">Uploaded by Rahul · 3 pages</div><div className="resource-dl">↓ Download PDF</div></div>
-            <div className="resource-card" data-tag="Networks" data-title="Computer Networks — OSI Model Quick Reference"><div className="resource-tag">Networks</div><div className="resource-title">Computer Networks — OSI Model Quick Reference</div><div className="resource-meta">Uploaded by Admin · 5 pages</div><div className="resource-dl">↓ Download PDF</div></div>
-            <div className="resource-card" data-tag="Web Dev" data-title="React + Supabase Starter Notes — Auth & DB Setup"><div className="resource-tag">Web Dev</div><div className="resource-title">React + Supabase Starter Notes — Auth & DB Setup</div><div className="resource-meta">Uploaded by Aryan · 8 pages</div><div className="resource-dl">↓ Download PDF</div></div>
-          </div>
+          <div className="resource-grid" id="resourceGrid"></div>
           <div id="resourceEmpty" style={{display:"none", textAlign:"center", color:"var(--gray-mid)", padding:"32px 0", fontSize:"14px"}}>No resources match that search.</div>
         </div>
       </section>
@@ -596,6 +666,13 @@ export default function Landing() {
               <div className="eyebrow">Task board</div>
               <div className="section-title">Everyone knows<br/>what to build next.</div>
               <p className="section-sub" style={{marginTop:"16px"}}>Assign tasks to teammates. Move cards from To Do to Done. Watch the progress bar fill up.</p>
+              <button
+                className="btn-ghost"
+                style={{marginTop:"20px", cursor:"pointer"}}
+                onClick={() => navigate(user ? "/my-projects" : "/signup")}
+              >
+                {user ? "Go to my projects →" : "Try it — sign up free →"}
+              </button>
             </div>
           </div>
         </div>
@@ -604,37 +681,15 @@ export default function Landing() {
       <section className="cta-section" id="signup">
         <h2>Ready to find your<br/>next teammate?</h2>
         <p>Join hundreds of students already building on Synch.</p>
-        <button className="btn-white" id="openSignupBtn" style={{border:"none", cursor:"pointer"}}>Create your profile — it's free</button>
+        <button
+          className="btn-white"
+          style={{border:"none", cursor:"pointer"}}
+          onClick={() => navigate("/signup")}
+        >
+          Create your profile — it's free
+        </button>
         <div className="cta-note">No credit card · No premium plans · Just students building things</div>
       </section>
-
-      <div className="modal-overlay" id="signupOverlay">
-        <div className="modal-box">
-          <div className="modal-close" id="closeSignupBtn">✕</div>
-          <div id="signupFormWrap">
-            <div className="eyebrow">Get started</div>
-            <div className="modal-title">Create your profile</div>
-            <form id="signupForm">
-              <label className="modal-label">Full name</label>
-              <input className="modal-input" type="text" id="signupName" required placeholder="Enter Your Name..."/>
-              <label className="modal-label">Email</label>
-              <input className="modal-input" type="email" id="signupEmail" required placeholder="Enter Your Email..."/>
-              <label className="modal-label">College/University</label>
-              <input className="modal-input" type="text" id="signupCollege" required placeholder="Enter Your Institution Name..."/>
-              <label className="modal-label">Your top skill</label>
-              <input className="modal-input" type="text" id="signupSkill" required placeholder="e.g. React, Design, ML"/>
-              <div className="modal-error" id="signupError"></div>
-              <button type="submit" className="btn-primary" style={{width:"100%", marginTop:"8px"}}>Create profile</button>
-            </form>
-          </div>
-          <div id="signupSuccessWrap" style={{display:"none", textAlign:"center"}}>
-            <div style={{fontSize:"40px", marginBottom:"12px"}}>🎉</div>
-            <div className="modal-title">You're in, <span id="successName"></span>!</div>
-            <p style={{color:"var(--gray-mid)", fontSize:"14px", margin:"10px 0 20px"}}>You're student <strong id="successCount"></strong> on Synch.</p>
-            <button className="btn-primary" id="signupDoneBtn" style={{width:"100%"}}>Done</button>
-          </div>
-        </div>
-      </div>
 
       <footer>
         <div className="footer-logo">Syn<span>ch</span></div>
@@ -642,7 +697,7 @@ export default function Landing() {
           <a href="#features">Features</a>
           <a href="#search">Find Skills</a>
           <a href="#library">Resources</a>
-          <a href="#signup">Sign up</a>
+          <a href="/signup" onClick={(e) => { e.preventDefault(); navigate("/signup"); }}>Sign up</a>
         </div>
         <div className="footer-copy">Made for students · Enjoy</div>
       </footer>

@@ -17,14 +17,17 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-8 h-16 bg-navy text-white shadow-lg shadow-black/20">
       <Link
-        to="/"
+        to={user ? "/home" : "/"}
         className="font-extrabold text-xl tracking-tight hover:opacity-90 transition-opacity"
       >
         Syn<span className="text-orange">ch</span>
       </Link>
 
       <div className="flex items-center gap-3 sm:gap-6 text-sm font-medium">
-        <Link to="/" className={navLinkClass}>
+        {/* BUG FIX: this used to always point to "/" (the landing page with
+            demo data). Logged-in users now correctly land on the real
+            /home page with real Supabase data. */}
+        <Link to={user ? "/home" : "/"} className={navLinkClass}>
           Resources
         </Link>
         <Link to="/search" className={navLinkClass}>
