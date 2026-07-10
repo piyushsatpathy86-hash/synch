@@ -103,6 +103,7 @@ Email-piyushsatpathy86@gmail.com
 Github-piyushsatpathy86-hash
 Name-Samikshya Bal
 Email-Samikshyabal991@gmail.com
-Github-Samikshyabal<img width="438" height="256" alt="Screenshot 2026-07-09 123039" src="https://github.com/user-attachments/assets/9477dca1-58f9-4cff-b868-f1ce6b027029" />
+Github-Samikshyabal
+<img width="438" height="256" alt="Screenshot 2026-07-09 123039" src="https://github.com/user-attachments/assets/9477dca1-58f9-4cff-b868-f1ce6b027029" />
 <img width="438" height="256" alt="Screenshot 2026-07-09 123039" src="https://github.com/user-attachments/assets/922d4ee4-5d07-4cab-9d75-bc40f9d18135" />
 
