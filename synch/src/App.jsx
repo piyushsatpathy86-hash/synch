@@ -10,6 +10,10 @@ import Search from "./pages/Search";
 import Upload from "./pages/Upload";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import CreateProject from "./pages/CreateProject";
+import JoinProject from "./pages/JoinProject";
+import Project from "./pages/Project";
+import MyProjects from "./pages/MyProjects";
 
 export default function App() {
   return (
@@ -40,6 +44,10 @@ export default function App() {
           }
         />
         <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+        <Route path="/create-project" element={<ProtectedRoute><CreateProject /></ProtectedRoute>} />
+<Route path="/join-project" element={<ProtectedRoute><JoinProject /></ProtectedRoute>} />
+<Route path="/project/:id" element={<ProtectedRoute><Project /></ProtectedRoute>} />
+<Route path="/my-projects" element={<ProtectedRoute><MyProjects /></ProtectedRoute>} />
       </Routes>
     </>
   );

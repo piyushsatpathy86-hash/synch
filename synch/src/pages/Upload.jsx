@@ -17,7 +17,9 @@ export default function Upload() {
 
     const fileName = `${Date.now()}_${file.name}`;
     const { error: storageError } = await supabase
-      .storage.from("resources").upload(fileName, file);
+      .storage.from("resources").upload(fileName, file, {
+        contentType: file.type,
+      });
 
     if (storageError) {
       alert("File upload failed: " + storageError.message);

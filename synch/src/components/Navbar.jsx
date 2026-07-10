@@ -36,6 +36,9 @@ export default function Navbar() {
             <Link to="/upload" className={navLinkClass}>
               Upload
             </Link>
+            <Link to="/my-projects" className={navLinkClass}>
+              My Projects
+            </Link>
             <Link to="/profile" className={navLinkClass}>
               Profile
             </Link>

@@ -16,6 +16,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (user) fetchProfile();
@@ -92,6 +93,7 @@ export default function Profile() {
     setAvatarUrl(finalAvatarUrl);
     setMessage("Profile updated successfully!");
     setSaving(false);
+    setIsEditing(false);
   }
 
   if (loading) {
@@ -105,113 +107,169 @@ export default function Profile() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-start sm:items-center justify-center px-4 py-10 bg-gradient-to-b from-white to-gray-50">
       <div className="w-full max-w-lg bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/60 p-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-extrabold text-navy">Your profile</h1>
-          <p className="text-gray-500 text-sm mt-1">Logged in as {user?.email}</p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-extrabold text-navy">Your profile</h1>
+            <p className="text-gray-500 text-sm mt-1">Logged in as {user?.email}</p>
+          </div>
+          {!isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="text-sm font-semibold text-orange border border-orange/30 rounded-lg px-4 py-2 hover:bg-orange/10 transition-all"
+            >
+              Edit
+            </button>
+          )}
         </div>
 
-        <form onSubmit={handleSave} className="flex flex-col gap-4">
-          <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Profile photo</label>
+        {!isEditing ? (
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
               {avatarUrl ? (
-                <img src={avatarUrl} alt="avatar" className="w-14 h-14 rounded-full object-cover" />
+                <img src={avatarUrl} alt="avatar" className="w-16 h-16 rounded-full object-cover" />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-orange text-white flex items-center justify-center text-lg font-bold">
+                <div className="w-16 h-16 rounded-full bg-orange text-white flex items-center justify-center text-xl font-bold">
                   {fullName?.[0]?.toUpperCase() || "?"}
                 </div>
               )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={e => setAvatarFile(e.target.files[0])}
-                className="text-sm"
-              />
+              <div>
+                <p className="font-bold text-navy">{fullName || "No name set"}</p>
+                <p className="text-gray-500 text-sm">{college || "No college set"}</p>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Full name</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
-              placeholder="Your name"
-              value={fullName}
-              onChange={e => setFullName(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">College</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
-              placeholder="e.g. IIT Bhubaneswar"
-              value={college}
-              onChange={e => setCollege(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">
-              Skills <span className="font-normal text-gray-400">(comma separated)</span>
-            </label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
-              placeholder="React, DSA, Figma, ML"
-              value={skillsInput}
-              onChange={e => setSkillsInput(e.target.value)}
-            />
-            {skillsInput.trim() && (
-              <div className="flex flex-wrap gap-1.5 mt-2">
+            {skillsInput && (
+              <div className="flex flex-wrap gap-1.5">
                 {skillsInput.split(",").map(s => s.trim()).filter(Boolean).map((skill, i) => (
-                  <span
-                    key={i}
-                    className="text-xs font-semibold bg-orange/10 text-orange px-2.5 py-1 rounded-full"
-                  >
+                  <span key={i} className="text-xs font-semibold bg-orange/10 text-orange px-2.5 py-1 rounded-full">
                     {skill}
                   </span>
                 ))}
               </div>
             )}
-          </div>
 
-          <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">GitHub</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
-              placeholder="github.com/username"
-              value={github}
-              onChange={e => setGithub(e.target.value)}
-            />
+            <div className="text-sm text-gray-600 flex flex-col gap-1 mt-2">
+              {github && <p>💻 {github}</p>}
+              {instagram && <p>📷 {instagram}</p>}
+              {emailContact && <p>📧 {emailContact}</p>}
+              {!github && !instagram && !emailContact && (
+                <p className="text-gray-400 italic">No contact info added yet.</p>
+              )}
+            </div>
           </div>
+        ) : (
+          <form onSubmit={handleSave} className="flex flex-col gap-4">
+            <div>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">Profile photo</label>
+              <div className="flex items-center gap-3">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="avatar" className="w-14 h-14 rounded-full object-cover" />
+                ) : (
+                  <div className="w-14 h-14 rounded-full bg-orange text-white flex items-center justify-center text-lg font-bold">
+                    {fullName?.[0]?.toUpperCase() || "?"}
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={e => setAvatarFile(e.target.files[0])}
+                  className="text-sm"
+                />
+              </div>
+            </div>
 
-          <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Instagram</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
-              placeholder="@username"
-              value={instagram}
-              onChange={e => setInstagram(e.target.value)}
-            />
-          </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">Full name</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+                placeholder="Your name"
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+              />
+            </div>
 
-          <div>
-            <label className="text-xs font-semibold text-gray-500 mb-1 block">Contact email</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
-              placeholder="you@college.edu"
-              value={emailContact}
-              onChange={e => setEmailContact(e.target.value)}
-            />
-          </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">College</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+                placeholder="e.g. IIT Bhubaneswar"
+                value={college}
+                onChange={e => setCollege(e.target.value)}
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-orange text-white font-bold py-2.5 rounded-lg mt-2 shadow-md shadow-orange/20 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:hover:scale-100 disabled:hover:brightness-100"
-          >
-            {saving ? "Saving…" : "Save changes"}
-          </button>
-        </form>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">
+                Skills <span className="font-normal text-gray-400">(comma separated)</span>
+              </label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+                placeholder="React, DSA, Figma, ML"
+                value={skillsInput}
+                onChange={e => setSkillsInput(e.target.value)}
+              />
+              {skillsInput.trim() && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {skillsInput.split(",").map(s => s.trim()).filter(Boolean).map((skill, i) => (
+                    <span
+                      key={i}
+                      className="text-xs font-semibold bg-orange/10 text-orange px-2.5 py-1 rounded-full"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">GitHub</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+                placeholder="github.com/username"
+                value={github}
+                onChange={e => setGithub(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">Instagram</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+                placeholder="@username"
+                value={instagram}
+                onChange={e => setInstagram(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-gray-500 mb-1 block">Contact email</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange/30 focus:border-orange transition-all"
+                placeholder="you@college.edu"
+                value={emailContact}
+                onChange={e => setEmailContact(e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-2 mt-2">
+              <button
+                type="submit"
+                disabled={saving}
+                className="flex-1 bg-orange text-white font-bold py-2.5 rounded-lg shadow-md shadow-orange/20 hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:hover:scale-100 disabled:hover:brightness-100"
+              >
+                {saving ? "Saving…" : "Save changes"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-semibold hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
 
         {message && (
           <p className="text-green-700 text-sm mt-4 bg-green-50 border border-green-100 rounded-lg px-3 py-2">
