@@ -51,6 +51,14 @@ export default function Signup() {
           <p className="text-gray-mid text-sm mt-1">Find your team, free forever</p>
         </div>
 
+        <div className="mb-5 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <p className="text-xs text-amber-800 leading-relaxed">
+            <span className="font-bold">⚠️ Please remember or save your password.</span>{" "}
+            Synch is currently under development, and password recovery isn't available yet.
+            If you forget it, you'll need to create a new account for now.
+          </p>
+        </div>
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label className="text-xs font-semibold text-gray-mid mb-1 block">Email</label>
