@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
@@ -8,7 +8,22 @@ export default function ResetPassword() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setSessionReady(true);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" && session) {
+        setSessionReady(true);
+      }
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -33,6 +48,14 @@ export default function ResetPassword() {
     setMessage("Password updated! Redirecting to login…");
     setLoading(false);
     setTimeout(() => navigate("/login"), 2000);
+  }
+
+  if (!sessionReady) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center">
+        <p className="text-gray-mid text-sm">Verifying reset link…</p>
+      </div>
+    );
   }
 
   return (
