@@ -10,8 +10,6 @@ import Profile from "./pages/Profile";
 import ViewProfile from "./pages/ViewProfile";
 import Search from "./pages/Search";
 import Upload from "./pages/Upload";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
 import CreateProject from "./pages/CreateProject";
 import JoinProject from "./pages/JoinProject";
 import Project from "./pages/Project";
@@ -26,8 +24,6 @@ export default function App() {
 <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/profile"
           element={
