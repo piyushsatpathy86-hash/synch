@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -33,8 +34,9 @@ export default function Signup() {
       if (profileError) console.error("Profile creation failed:", profileError.message);
     }
 
-    setMessage("Check your email to confirm your account.");
+    setMessage("Account created! Redirecting…");
     setLoading(false);
+    setTimeout(() => navigate("/profile"), 1000);
   }
 
   return (

@@ -51,12 +51,7 @@ export default function Login() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-gray-mid block">Password</label>
-              <Link to="/forgot-password" className="text-xs font-semibold text-orange hover:underline">
-                Forgot password?
-              </Link>
-            </div>
+            <label className="text-xs font-semibold text-gray-mid mb-1 block">Password</label>
             <input
               type="password"
               placeholder="Password"
