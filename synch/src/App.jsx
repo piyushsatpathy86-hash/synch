@@ -14,6 +14,7 @@ import CreateProject from "./pages/CreateProject";
 import JoinProject from "./pages/JoinProject";
 import Project from "./pages/Project";
 import MyProjects from "./pages/MyProjects";
+import About from "./pages/About";
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
 <Route path="/join-project" element={<ProtectedRoute><JoinProject /></ProtectedRoute>} />
 <Route path="/project/:id" element={<ProtectedRoute><Project /></ProtectedRoute>} />
 <Route path="/my-projects" element={<ProtectedRoute><MyProjects /></ProtectedRoute>} />
+<Route path="/about" element={<About />} />
       </Routes>
     </>
   );
