@@ -39,7 +39,7 @@ export default function Project() {
       .from("group_members")
       .select("user_id, profiles(id, full_name, avatar_url)")
       .eq("group_id", id);
-    setMembers(memberRows?.map(m => m.profiles) || []);
+    setMembers(memberRows?.map(m => m.profiles).filter(Boolean) || []);
 
     const { data: taskRows } = await supabase
       .from("tasks")
